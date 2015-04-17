@@ -18,7 +18,7 @@ CLANGXX_PATH = '/Users/yygu/MIT/SuperUROP/build/Debug+Asserts/bin/clang++ -m32'
 
 OUTPUT_FILE = './tmp.bin'
 PREPEND_FLAG = "-mllvm "
-APP = 'app/raytracer.cpp'
+APP = 'apps/raytracer.cpp'
 
 LLVM_FLAGS = [
   'simplifycfg-dup-ret',
