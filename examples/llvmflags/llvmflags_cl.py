@@ -21,8 +21,8 @@ PREPEND_FLAG = "-mllvm "
 APP = 'app/raytracer.cpp'
 
 LLVM_FLAGS = [
-  #'simplifycfg-dup-ret',
-  #'simplifycfg-hoist-cond-stores'
+  'simplifycfg-dup-ret',
+  'simplifycfg-hoist-cond-stores'
 ]
 
 # (name, min, max)
@@ -64,7 +64,7 @@ class LlvmFlagsTuner(MeasurementInterface):
       if cfg[flag] == 'on':
         llvm_cmd += PREPEND_FLAG + '-f{0} '.format(flag)
       elif cfg[flag] == 'off':
-        llvm_cmd += PREPEND_FLAG + '-fno-{0} '.format(flag)
+        continue
     for param, min, max in LLVM_PARAMS:
       llvm_cmd += PREPEND_FLAG + '-{0}={1} '.format(param, cfg[param])
     
