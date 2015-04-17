@@ -62,7 +62,7 @@ class LlvmFlagsTuner(MeasurementInterface):
 
     for flag in LLVM_FLAGS:
       if cfg[flag] == 'on':
-        llvm_cmd += PREPEND_FLAG + '-f{0} '.format(flag)
+        llvm_cmd += PREPEND_FLAG + '-{0} '.format(flag)
       elif cfg[flag] == 'off':
         continue
     for param, min, max in LLVM_PARAMS:
