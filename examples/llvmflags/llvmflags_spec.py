@@ -13,17 +13,18 @@ from opentuner import IntegerParameter
 from opentuner import MeasurementInterface
 from opentuner import Result
 
-#CONFIG_FILE = 'lanka-llvm'
-CONFIG_FILE = 'Custom-macosx-llvm'
-SPEC_TEST = 'bzip' # 483
+CONFIG_FILE = 'lanka-llvm'
+#CONFIG_FILE = 'Custom-macosx-llvm'
 ITERATIONS = 5
 
 if CONFIG_FILE.startswith('lanka'):
   START_LINE = 130
   SPEC_DIR = '/data/scratch/yygu/spec/config/'
+  SPEC_TEST = '483'
 else:
   START_LINE = 45
   SPEC_DIR = '/Users/yygu/MIT/SuperUROP/spec/config/'
+  SPEC_TEST = 'bzip'
 
 PREPEND_FLAG = "-mllvm "
 COMMON_LINE = None
@@ -94,7 +95,7 @@ class LlvmFlagsTuner(MeasurementInterface):
     total_flags = ''
     for flag in LLVM_FLAGS:
       if cfg[flag] == 'on':
-        total_flags += PREPEND_FLAG + '-f{0} '.format(flag)
+        total_flags += PREPEND_FLAG + '-{0} '.format(flag)
       elif cfg[flag] == 'off':
         continue
     for param, min, max in LLVM_PARAMS:
