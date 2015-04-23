@@ -13,14 +13,15 @@ from opentuner import IntegerParameter
 from opentuner import MeasurementInterface
 from opentuner import Result
 
+import csv
 import os.path
 import subprocess
 import time
 
 
-#CONFIG_FILE = 'lanka-llvm-opentuner.cfg'
-CONFIG_FILE = 'Custom-macosx-llvm-opentuner.cfg'
-ITERATIONS = 1
+CONFIG_FILE = 'lanka-llvm-opentuner.cfg'
+#CONFIG_FILE = 'Custom-macosx-llvm-opentuner.cfg'
+ITERATIONS = 5
 
 if CONFIG_FILE.startswith('lanka'):
   START_LINE = 130
@@ -50,8 +51,8 @@ def get_elapsed_time(output):
       csv_file_name = line.split('/')[-1][:-1]
       break
   if not csv_file_name:
-    print "Warning: csv file does not exist for slurm", slurm
-    assert False
+    print "Warning: csv file does not exist."
+    return None
   times = []
   with open(SPEC_RESULT_DIR + csv_file_name, 'rb') as csv_file:
     reader = csv.reader(csv_file)
@@ -155,6 +156,9 @@ class LlvmFlagsTuner(MeasurementInterface):
     assert run_result['returncode'] == 0
 
     elapsed_time = get_elapsed_time(run_result['stdout'])
+    if elapsed_time is None:
+      return Result(state='ERROR', time=float('inf'))
+
     return Result(time=elapsed_time)
 
     """
