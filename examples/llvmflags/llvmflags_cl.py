@@ -13,26 +13,48 @@ from opentuner import IntegerParameter
 from opentuner import MeasurementInterface
 from opentuner import Result
 
-CLANGXX_PATH = '/Users/yygu/MIT/SuperUROP/build/Debug+Asserts/bin/clang++ -m32'
-#CLANGXX_PATH = '/data/scratch/yygu/build/Debug+Asserts/bin/clang++'
+#CLANGXX_PATH = '/Users/yygu/MIT/SuperUROP/build/Debug+Asserts/bin/clang++ -m32'
+CLANGXX_PATH = '/data/scratch/yygu/build/Debug+Asserts/bin/clang++'
+
+USE_ONLY_INTERNAL = True
+PARAMS_INTERNAL_FILE = 'params_internal.txt'
+PARAMS_EXTERNAL_FILE = 'params_external.txt'
+FLAGS_INTERNAL_FILE = 'flags_internal.txt'
+FLAGS_EXTERNAL_FILE = 'flags_external.txt'
 
 OUTPUT_FILE = './tmp.bin'
 PREPEND_FLAG = "-mllvm "
 APP = 'apps/raytracer.cpp'
 
-LLVM_FLAGS = [
-  'simplifycfg-dup-ret',
-  'simplifycfg-hoist-cond-stores'
-]
-
-# (name, min, max)
-LLVM_PARAMS = [
-  ('copy-factor', 0, 1000),
-  ('unroll-runtime-count', 0, 1000),
-  ('jump-threading-threshold', 0, 1000),
-]
-
 class LlvmFlagsTuner(MeasurementInterface):
+
+  def __init__(self, *pargs, **kwargs):
+    super(LlvmFlagsTuner, self).__init__(*pargs, **kwargs)
+    self.llvm_flags_internal = self.convert_flags(FLAGS_INTERNAL_FILE)
+    self.llvm_params_internal = self.convert_params(PARAMS_INTERNAL_FILE)
+    self.llvm_flags_external = self.convert_flags(FLAGS_EXTERNAL_FILE)
+    self.llvm_params_external = self.convert_params(PARAMS_EXTERNAL_FILE)
+
+    if USE_ONLY_INTERNAL:
+      self.llvm_flags = self.llvm_flags_internal
+      self.llvm_params = self.llvm_params_internal
+    else:
+      self.llvm_flags = self.llvm_flags_internal + self.llvm_flags_external
+      self.llvm_params = self.llvm_params_internal + self.llvm_params_external
+
+  def convert_flags(self, fname):
+    flags = []
+    with open(fname) as f:
+      for line in f:
+        flags.append(line[:-1])
+    return flags
+
+  def convert_params(self, fname):
+    params = []
+    with open(fname) as f:
+      for line in f:
+        params.append((line[:-1], 0, 1000))
+    return params
 
   def manipulator(self):
     """
@@ -42,11 +64,11 @@ class LlvmFlagsTuner(MeasurementInterface):
     manipulator = ConfigurationManipulator()
     manipulator.add_parameter(
       IntegerParameter('opt_level', 0, 3))
-    for flag in LLVM_FLAGS:
+    for flag in self.llvm_flags:
       manipulator.add_parameter(
         EnumParameter(flag,
                       ['on', 'off', 'default']))
-    for param, min, max in LLVM_PARAMS:
+    for param, min, max in self.llvm_params:
       manipulator.add_parameter(
         IntegerParameter(param, min, max))
     return manipulator
@@ -60,25 +82,29 @@ class LlvmFlagsTuner(MeasurementInterface):
     llvm_cmd = CLANGXX_PATH + ' ' + APP + ' -o ' + OUTPUT_FILE
     llvm_cmd += ' -O{0} '.format(cfg['opt_level'])
 
-    for flag in LLVM_FLAGS:
+    for flag in self.llvm_flags:
       if cfg[flag] == 'on':
         llvm_cmd += PREPEND_FLAG + '-{0} '.format(flag)
       elif cfg[flag] == 'off':
         continue
-    for param, min, max in LLVM_PARAMS:
+    for param, min, max in self.llvm_params:
       llvm_cmd += PREPEND_FLAG + '-{0}={1} '.format(param, cfg[param])
     
     print llvm_cmd
 
     compile_result = self.call_program(llvm_cmd)
-    assert compile_result['returncode'] == 0
+    if compile_result['returncode'] != 0:
+      #temp solution
+      return Result(state='ERROR', time=float('inf'))
 
-    
     run_result = self.call_program(OUTPUT_FILE)
     print run_result
-    assert run_result['returncode'] == 0
+    if run_result['returncode'] != 0:
+      return Result(state='ERROR', time=float('inf'))
+      
     return Result(time=run_result['time'])
 
 if __name__ == '__main__':
   argparser = opentuner.default_argparser()
-  LlvmFlagsTuner.main(argparser.parse_args())
+  args = argparser.parse_args()
+  LlvmFlagsTuner.main(args)
