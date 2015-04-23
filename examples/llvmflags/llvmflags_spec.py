@@ -20,8 +20,7 @@ import time
 
 #CONFIG_FILE = 'lanka-llvm-opentuner.cfg'
 CONFIG_FILE = 'Custom-macosx-llvm-opentuner.cfg'
-ITERATIONS = 5
-BATCH_FILE = 'opentuner.batch'
+ITERATIONS = 1
 
 if CONFIG_FILE.startswith('lanka'):
   START_LINE = 130
@@ -150,6 +149,7 @@ class LlvmFlagsTuner(MeasurementInterface):
     llvm_cmd = 'runspec --config=' + CONFIG_FILE + \
                ' --iterations=' + str(ITERATIONS) + ' --noreportable ' + SPEC_TEST
     
+    print llvm_cmd
     run_result = self.call_program(llvm_cmd)
     print run_result
     assert run_result['returncode'] == 0
@@ -161,7 +161,8 @@ class LlvmFlagsTuner(MeasurementInterface):
     SLEEP = 60
     TIMEOUT = 6000
     DONE_FILE = 'DONE'
-    
+
+    BATCH_FILE = 'opentuner.batch'
     llvm_cmd = 'sbatch ' + BATCH_FILE
     proc = subprocess.Popen(llvm_cmd.split(), stdout=subprocess.PIPE)
     batch_line = proc.stdout.readline()
