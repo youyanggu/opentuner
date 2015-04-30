@@ -133,7 +133,7 @@ class LlvmFlagsTuner(MeasurementInterface):
     all_params = []
     if args.use_internal or not args.use_external:
       all_params += self.llvm_params_internal
-    elif args.use_external:
+    if args.use_external:
       all_params += self.llvm_params_external
 
     working_params = []
@@ -204,7 +204,7 @@ class LlvmFlagsTuner(MeasurementInterface):
     except OSError:
       return Result(state='ERROR', time=float('inf'))
 
-    print run_result
+    print result_id, run_result
 
     if run_result['returncode'] != 0:
       if run_result['timeout']:
@@ -216,6 +216,7 @@ class LlvmFlagsTuner(MeasurementInterface):
     return Result(time=run_result['time'])
 
   def compile_with_flags(self, flags, result_id):
+    print result_id, flags
     tmp_dir = self.get_tmpdir(result_id)
     try:
       os.stat(tmp_dir)
@@ -230,7 +231,7 @@ class LlvmFlagsTuner(MeasurementInterface):
                                        memory_limit=args.memory_limit)
     if compile_result['returncode'] != 0:
       if compile_result['timeout']:
-        #log.warning("clang timeout")
+        log.warning("clang timeout")
         return self.compile_results['timeout']
       else:
         log.warning("clang error %s", compile_result['stderr'])
