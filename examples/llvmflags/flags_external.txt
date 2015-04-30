@@ -188,7 +188,6 @@ live-debug-variables
 machine-sink-split
 mark-data-regions
 mc-relax-all
-mc-x86-disable-arith-relaxation
 misched-bench
 misched-bottomup
 misched-cluster
@@ -286,6 +285,3 @@ version
 view-background
 view-edge-bundles
 widen-vmovs
-x86-early-ifcvt
-x86-use-base-pointer
-x86-use-vzeroupper
