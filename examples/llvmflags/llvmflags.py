@@ -52,6 +52,8 @@ argparser.add_argument('--logfile', default=None,
 		       help='log file')
 argparser.add_argument('--use-internal', action='store_true') 
 argparser.add_argument('--use-external', action='store_true') 
+argparser.add_argument('--use-params', action='store_true') 
+argparser.add_argument('--use-flags', action='store_true') 
 
 class LlvmFlagsTuner(MeasurementInterface):
 
@@ -110,8 +112,10 @@ class LlvmFlagsTuner(MeasurementInterface):
     Figure out which gcc flags work (don't cause gcc to barf) by running
     each one.
     """
+    if not args.use_flags:
+      return []
     all_flags = []
-    if args.use_internal:
+    if args.use_internal or not args.use_external:
       all_flags += self.llvm_flags_internal
     if args.use_external:
       all_flags += self.llvm_flags_external
@@ -124,8 +128,10 @@ class LlvmFlagsTuner(MeasurementInterface):
     Figure out which clang params work (don't cause clang to barf) by running
     each one.
     """
+    if not args.use_params and args.use_flags:
+      return []
     all_params = []
-    if args.use_internal:
+    if args.use_internal or not args.use_external:
       all_params += self.llvm_params_internal
     elif args.use_external:
       all_params += self.llvm_params_external
