@@ -235,7 +235,6 @@ class LlvmFlagsTuner(MeasurementInterface):
         return self.compile_results['timeout']
       else:
         log.warning("clang error %s", compile_result['stderr'])
-        self.debug_gcc_error(flags)
         return self.compile_results['error']
     return self.compile_results['ok']
  
