@@ -21,7 +21,7 @@ from opentuner import Result
 #CLANGXX_PATH = '/Users/yygu/MIT/SuperUROP/build/Debug+Asserts/bin/clang++ -m32'
 CLANGXX_PATH = '/data/scratch/yygu/build/Debug+Asserts/bin/clang++'
 
-DEFAULT_PARAM_VALUE = 1
+DEFAULT_PARAM_VALUE = 500
 MIN_VAL = 0
 MAX_VAL = 1000
 PARAMS_INTERNAL_FILE = 'params_internal.txt'
@@ -96,6 +96,7 @@ class LlvmFlagsTuner(MeasurementInterface):
     if flag not in ['O0', 'O1', 'O2', 'O3']:
       flag = 'mllvm -' + flag
     flag = '-' + flag
+    print flag
     cmd = args.compile_template.format(source=args.source, output=args.output,
                                        flags=flag, clang=args.clang)
     compile_result = self.call_program(cmd, limit=args.compile_limit)
@@ -197,6 +198,8 @@ class LlvmFlagsTuner(MeasurementInterface):
     except OSError:
       return Result(state='ERROR', time=float('inf'))
 
+    print run_result
+
     if run_result['returncode'] != 0:
       if run_result['timeout']:
         return Result(state='TIMEOUT', time=float('inf'))
@@ -221,7 +224,7 @@ class LlvmFlagsTuner(MeasurementInterface):
                                        memory_limit=args.memory_limit)
     if compile_result['returncode'] != 0:
       if compile_result['timeout']:
-        log.warning("clang timeout")
+        #log.warning("clang timeout")
         return self.compile_results['timeout']
       else:
         log.warning("clang error %s", compile_result['stderr'])

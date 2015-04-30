@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Autotune flags to g++ to optimize the performance of apps/raytracer.cpp
+# Autotune flags to LLVM to optimize the performance of apps/raytracer.cpp
 #
 # This is an extremely simplified version meant only for tutorials
 #
@@ -17,10 +17,16 @@ from opentuner import Result
 CLANGXX_PATH = '/data/scratch/yygu/build/Debug+Asserts/bin/clang++'
 
 USE_ONLY_INTERNAL = True
-PARAMS_INTERNAL_FILE = 'params_internal.txt'
+
+# agg-antidep-debugdiv, align-all-blocks, asan-mapping-scale, etc.
 PARAMS_EXTERNAL_FILE = 'params_external.txt'
-FLAGS_INTERNAL_FILE = 'flags_internal.txt'
+
+# copy-factor, unroll-runtime-count, etc.
+PARAMS_INTERNAL_FILE = 'params_internal.txt'
+
+# aggregate-extracted-args, aggressive-ext-opt, align-neon-spills, etc.
 FLAGS_EXTERNAL_FILE = 'flags_external.txt'
+FLAGS_INTERNAL_FILE = 'flags_internal.txt'
 
 OUTPUT_FILE = './tmp.bin'
 PREPEND_FLAG = "-mllvm "
@@ -71,6 +77,7 @@ class LlvmFlagsTuner(MeasurementInterface):
     for param, min, max in self.llvm_params:
       manipulator.add_parameter(
         IntegerParameter(param, min, max))
+    print manipulator
     return manipulator
 
   def run(self, desired_result, input, limit):
@@ -94,7 +101,6 @@ class LlvmFlagsTuner(MeasurementInterface):
 
     compile_result = self.call_program(llvm_cmd)
     if compile_result['returncode'] != 0:
-      #temp solution
       return Result(state='ERROR', time=float('inf'))
 
     run_result = self.call_program(OUTPUT_FILE)
