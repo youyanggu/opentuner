@@ -112,12 +112,12 @@ class LlvmFlagsTuner(MeasurementInterface):
     Figure out which gcc flags work (don't cause gcc to barf) by running
     each one.
     """
-    if not args.use_flags:
+    if not args.use_flags and args.use_params:
       return []
     all_flags = []
     if args.use_internal or not args.use_external:
       all_flags += self.llvm_flags_internal
-    if args.use_external:
+    if args.use_external or not args.use_internal:
       all_flags += self.llvm_flags_external
 
     working_flags = filter(self.check_if_flag_works, all_flags)
@@ -133,7 +133,7 @@ class LlvmFlagsTuner(MeasurementInterface):
     all_params = []
     if args.use_internal or not args.use_external:
       all_params += self.llvm_params_internal
-    if args.use_external:
+    if args.use_external or not args.use_internal:
       all_params += self.llvm_params_external
 
     working_params = []
