@@ -48,6 +48,16 @@ class LlvmFlagsTuner(MeasurementInterface):
       self.llvm_flags = self.llvm_flags_internal + self.llvm_flags_external
       self.llvm_params = self.llvm_params_internal + self.llvm_params_external
 
+  def run_baselines(self):
+    results = []
+    for i in range(4):
+      llvm_cmd = '{} {} -o {} -O{}'.format(CLANGXX_PATH, APP, OUTPUT_FILE, i)
+    compile_result = self.call_program(llvm_cmd)
+    run_result = self.call_program(OUTPUT_FILE)
+    results.append(run_result['time'])
+    log.info("baseline perfs -O0=%.4f -O1=%.4f -O2=%.4f -O3=%.4f",
+             *results)
+
   def convert_flags(self, fname):
     flags = []
     with open(fname) as f:
@@ -77,7 +87,7 @@ class LlvmFlagsTuner(MeasurementInterface):
     for param, min, max in self.llvm_params:
       manipulator.add_parameter(
         IntegerParameter(param, min, max))
-    print manipulator
+
     return manipulator
 
   def run(self, desired_result, input, limit):
