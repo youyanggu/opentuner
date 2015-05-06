@@ -19,13 +19,13 @@ CLANGXX_PATH = '/data/scratch/yygu/build/Debug+Asserts/bin/clang++'
 USE_ONLY_INTERNAL = True
 
 # agg-antidep-debugdiv, align-all-blocks, asan-mapping-scale, etc.
-PARAMS_EXTERNAL_FILE = 'params_external.txt'
+PARAMS_EXTERNAL_FILE = 'working_params_external.txt'
 
 # copy-factor, unroll-runtime-count, etc.
 PARAMS_INTERNAL_FILE = 'params_internal.txt'
 
 # aggregate-extracted-args, aggressive-ext-opt, align-neon-spills, etc.
-FLAGS_EXTERNAL_FILE = 'flags_external.txt'
+FLAGS_EXTERNAL_FILE = 'working_flags_external.txt'
 FLAGS_INTERNAL_FILE = 'flags_internal.txt'
 
 OUTPUT_FILE = './tmp.bin'
