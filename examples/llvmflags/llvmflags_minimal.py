@@ -109,11 +109,11 @@ class LlvmFlagsTuner(MeasurementInterface):
     
     print llvm_cmd
 
-    compile_result = self.call_program(llvm_cmd)
+    compile_result = self.call_program(llvm_cmd, limit=10, memory_limit=1024**3)
     if compile_result['returncode'] != 0:
       return Result(state='ERROR', time=float('inf'))
 
-    run_result = self.call_program(OUTPUT_FILE)
+    run_result = self.call_program(OUTPUT_FILE, limit=10, memory_limit=1024**3)
     print run_result
     if run_result['returncode'] != 0:
       return Result(state='ERROR', time=float('inf'))
