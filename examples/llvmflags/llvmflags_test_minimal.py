@@ -43,7 +43,7 @@ class LlvmFlagsTuner(MeasurementInterface):
     cfg = desired_result.configuration.data
     llvm_cmd = CLANGXX_PATH + ' ' + APP + ' -o ' + OUTPUT_FILE + ' '
 
-    llvm_cmd += PREPEND_FLAG + '-{0}={1}'.format(PARAM, cfg[PARAM])
+    llvm_cmd += PREPEND_FLAG + '{0}={1}'.format(PARAM, cfg[PARAM])
     
     print llvm_cmd
 

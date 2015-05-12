@@ -84,7 +84,7 @@ class LlvmFlagsTuner(MeasurementInterface):
   compile_results = {'ok': 0, 'timeout': 1, 'error': 2}
 
   def compile(self, config_data, result_id):
-    flags = [PREPEND_FLAG + '-{}={}'.format(PARAM, config_data[PARAM])]
+    flags = [PREPEND_FLAG + '{}={}'.format(PARAM, config_data[PARAM])]
     return self.compile_with_flags(flags, result_id)
 
   def run_precompiled(self, desired_result, input, limit, compile_result,
