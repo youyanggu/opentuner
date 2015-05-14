@@ -98,7 +98,7 @@ class LlvmFlagsTuner(MeasurementInterface):
     if flag not in ['O0', 'O1', 'O2', 'O3']:
       flag = 'mllvm -' + flag
     flag = '-' + flag
-    print flag
+    log.info(flag)
     cmd = args.compile_template.format(source=args.source, output=args.output,
                                        flags=flag, clang=args.clang)
     compile_result = self.call_program(cmd, limit=args.compile_limit)
@@ -204,7 +204,7 @@ class LlvmFlagsTuner(MeasurementInterface):
     except OSError:
       return Result(state='ERROR', time=float('inf'))
 
-    print result_id, run_result
+    log.info('{}{}'.format(result_id, run_result))
 
     if run_result['returncode'] != 0:
       if run_result['timeout']:
@@ -216,7 +216,7 @@ class LlvmFlagsTuner(MeasurementInterface):
     return Result(time=run_result['time'])
 
   def compile_with_flags(self, flags, result_id):
-    print result_id, flags
+    log.info('{}{}'.format(result_id, flags))
     tmp_dir = self.get_tmpdir(result_id)
     try:
       os.stat(tmp_dir)

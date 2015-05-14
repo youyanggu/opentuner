@@ -16,7 +16,7 @@ from opentuner import Result
 #CLANGXX_PATH = '/Users/yygu/MIT/SuperUROP/build/Debug+Asserts/bin/clang++ -m32'
 CLANGXX_PATH = '/data/scratch/yygu/build/Debug+Asserts/bin/clang++'
 
-USE_ONLY_INTERNAL = True
+USE_ONLY_INTERNAL = False
 
 # agg-antidep-debugdiv, align-all-blocks, asan-mapping-scale, etc.
 PARAMS_EXTERNAL_FILE = 'working_params_external.txt'

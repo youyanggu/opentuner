@@ -100,7 +100,7 @@ class LlvmFlagsTuner(MeasurementInterface):
     tmp_dir = self.get_tmpdir(result_id)
     output_dir = '{}/{}'.format(tmp_dir, args.output)
     try:
-      run_result = self.call_program([output_dir], limit=limit,
+      run_result = self.call_program([output_dir], limit=3600.0 * 24 * 365 * 10,#limit,
                                      memory_limit=args.memory_limit)
     except OSError:
       return Result(state='ERROR', time=float('inf'))
@@ -109,6 +109,7 @@ class LlvmFlagsTuner(MeasurementInterface):
 
     if run_result['returncode'] != 0:
       if run_result['timeout']:
+        print "TIMEOUT"
         return Result(state='TIMEOUT', time=float('inf'))
       else:
         log.error('program error')
